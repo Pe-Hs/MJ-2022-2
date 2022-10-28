@@ -55,6 +55,33 @@
     </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+
+    <script>
+
+        function validaNumericos(event) {
+            if(event.charCode >= 48 && event.charCode <= 57){
+              return true;
+             }
+             return false;        
+        }
+
+        function check(e) {
+            tecla = (document.all) ? e.keyCode : e.which;
+
+            //Tecla de retroceso para borrar, siempre la permite
+            if (tecla == 8) {
+                return true;
+            }
+
+            // Patrón de entrada, en este caso solo acepta numeros y letras
+            patron = /[A-Za-z ]/;
+            tecla_final = String.fromCharCode(tecla);
+            return patron.test(tecla_final);
+        }
+
+
+    </script>
+
     <div class="row">
             <div class="col-sm-12">
                <div class="card">
@@ -193,13 +220,13 @@
                                           <div class="col-sm-4">
                                             <div class="form-group mb-0">
                                               <label for="txtRazonSocialProveedor" class="col-form-label col-form-label-sm">Numero Documento: <span class="required">*</span> </label>
-                                              <input type="text" class="form-control form-control-sm model" id="txtclientedocumento" name="RazonSocial" autocomplete="off">
+                                              <input type="text" class="form-control form-control-sm model" id="txtclientedocumento" minlength="8" maxlength="15" name="RazonSocial" placeholder="" autocomplete="off" onkeypress='return validaNumericos(event)'>
                                             </div>
                                           </div>
                                           <div class="col-sm-4">
                                             <div class="form-group mb-0">
                                               <label for="txtRazonSocialProveedor" class="col-form-label col-form-label-sm">Nombres: <span class="required">*</span></label>
-                                              <input type="text" class="form-control form-control-sm model" id="txtclientenombres" name="RazonSocial" autocomplete="off">
+                                              <input type="text" class="form-control form-control-sm model" id="txtclientenombres"  maxlength="50" onkeypress="return check(event)" name="RazonSocial" autocomplete="off">
                                             </div>
                                           </div>
                                       </div>
@@ -207,13 +234,13 @@
                                           <div class="col-sm-8">
                                             <div class="form-group mb-0">
                                               <label for="txtRazonSocialProveedor" class="col-form-label col-form-label-sm">Direccion:</label>
-                                              <input type="text" class="form-control form-control-sm model" id="txtclientedireccion" name="clientedireccion" autocomplete="off">
+                                              <input type="text" class="form-control form-control-sm model"  maxlength="150" id="txtclientedireccion" name="clientedireccion" placeholder="Ejm. Av. Gardenias 789, Surco" autocomplete="off">
                                             </div>
                                           </div>
                                           <div class="col-sm-4">
                                             <div class="form-group mb-0">
                                               <label for="txtRazonSocialProveedor" class="col-form-label col-form-label-sm">Telefono:</label>
-                                              <input type="text" class="form-control form-control-sm model" id="txtclientetelefono" name="RazonSocial" autocomplete="off">
+                                              <input type="text" class="form-control form-control-sm model"  maxlength="9" id="txtclientetelefono" name="RazonSocial" autocomplete="off" onkeypress='return validaNumericos(event)'>
                                             </div>
                                           </div>
                                       </div>

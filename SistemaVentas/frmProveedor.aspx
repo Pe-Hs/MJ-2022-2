@@ -3,6 +3,51 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     
+   <script>
+
+       function validaNumericos(event) {
+           if (event.charCode >= 48 && event.charCode <= 57) {
+               return true;
+           }
+           return false;
+       }
+
+       function soloLetras(e) {
+           tecla = (document.all) ? e.keyCode : e.which;
+
+           //Tecla de retroceso para borrar, siempre la permite
+           if (tecla == 8) {
+               return true;
+           }
+
+           // Patrón de entrada, en este caso solo acepta numeros y letras
+           patron = /[A-Za-z ]/;
+           tecla_final = String.fromCharCode(tecla);
+           return patron.test(tecla_final);
+       }
+
+       function numerosLetras(e) {
+           tecla = (document.all) ? e.keyCode : e.which;
+
+           //Tecla de retroceso para borrar, siempre la permite
+           if (tecla == 8) {
+               return true;
+           }
+
+           // Patrón de entrada, en este caso solo acepta numeros y letras
+           patron = /[A-Za-z0-9 ]/;
+           tecla_final = String.fromCharCode(tecla);
+           return patron.test(tecla_final);
+       }
+
+       function Email(str) {
+           var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+           if (!re.test(str))
+               swal("Mensaje", "Ingrese formato adecuado de email", "warning");
+       }
+
+   </script>
+
         <div class="row">
             <div class="col-sm-12">
                <div class="card">
@@ -59,25 +104,25 @@
               <div class="form-group row">
                 <label for="staticEmail" class="col-sm-2 col-form-label col-form-label-sm">RUC</label>
                 <div class="col-sm-10">
-                  <input type="text" class="form-control form-control-sm model" id="txtRuc" name="RUC">
+                  <input type="text" class="form-control form-control-sm model" id="txtRuc" maxlength="12" onkeypress="return validaNumericos(event)" name="RUC">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="staticEmail" class="col-sm-2 col-form-label col-form-label-sm">Razón Social</label>
                 <div class="col-sm-10">
-                  <input type="text" class="form-control form-control-sm model" id="txtRazonSocial" name="Razón Social">
+                  <input type="text" class="form-control form-control-sm model" id="txtRazonSocial" onkeypress="return soloLetras(event)" name="Razón Social">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="staticEmail" class="col-sm-2 col-form-label col-form-label-sm">Telefono</label>
                 <div class="col-sm-10">
-                  <input type="text" class="form-control form-control-sm model" id="txtTelefono" name="Telefono">
+                  <input type="text" class="form-control form-control-sm model" id="txtTelefono" maxlength="9" onkeypress="return validaNumericos(event)" name="Telefono">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="staticEmail" class="col-sm-2 col-form-label col-form-label-sm">Correo</label>
                 <div class="col-sm-10">
-                  <input type="text" class="form-control form-control-sm model" id="txtCorreo" name="Correo">
+                  <input type="text" class="form-control form-control-sm model" id="txtCorreo" onblur="return Email(this.value)" name="Correo">
                 </div>
               </div>
               

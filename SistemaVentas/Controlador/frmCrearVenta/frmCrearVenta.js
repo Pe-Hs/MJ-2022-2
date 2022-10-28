@@ -218,6 +218,8 @@ $('#tbVenta tbody').on('click', 'button[class="btn btn-danger btn-sm"]', functio
 
 $('#btnTerminarGuardarVenta').on('click', function () {
 
+    calcularCambio();
+
     //VALIDACIONES DE CLIENTE
     if ($("#txtclientedocumento").val().trim() == "" || $("#txtclientenombres").val().trim() == "") {
         swal("Mensaje", "Complete los datos del cliente", "warning");
@@ -235,111 +237,116 @@ $('#btnTerminarGuardarVenta').on('click', function () {
         return;
     }
 
-    var $totalproductos = 0;
-    var $totalimportes = 0;
+    if ($("#txtmontopago").val().trim() < parseFloat($("#txttotal").val().trim())) {
+        swal("Mensaje", "El monto de pago debe ser Mayor al Total", "warning");
+        return;
 
-    var DETALLE = "";
-    var VENTA = "";
-    var DETALLE_CLIENTE = "";
-    var DETALLE_VENTA = "";
-    var DATOS_VENTA = "";
-    
-    calcularCambio();
+    } else {
 
-    $('#tbVenta > tbody  > tr').each(function (index, tr) {
-        var fila = tr;
-        var productocantidad = parseInt($(fila).find("td.productocantidad").text());
-        var idproducto = $(fila).find("td.producto").data("idproducto");
-        var productoprecio = parseFloat($(fila).find("td.productoprecio").text());
-        var importetotal = parseFloat($(fila).find("td.importetotal").text());
+        var $totalproductos = 0;
+        var $totalimportes = 0;
 
-        $totalproductos = $totalproductos + productocantidad;
-        $totalimportes = $totalimportes + importetotal;
+        var DETALLE = "";
+        var VENTA = "";
+        var DETALLE_CLIENTE = "";
+        var DETALLE_VENTA = "";
+        var DATOS_VENTA = "";
 
-        DATOS_VENTA = DATOS_VENTA + "<DATOS>"+
-            "<IdVenta> 0</IdVenta >" +
-            "<IdProducto>" + idproducto + "</IdProducto>" +
-            "<Cantidad>" + productocantidad + "</Cantidad>" +
-            "<PrecioUnidad>" + productoprecio + "</PrecioUnidad>" +
-            "<ImporteTotal>" + importetotal + "</ImporteTotal>" +
-        "</DATOS>"
-    });
+        $('#tbVenta > tbody  > tr').each(function (index, tr) {
+            var fila = tr;
+            var productocantidad = parseInt($(fila).find("td.productocantidad").text());
+            var idproducto = $(fila).find("td.producto").data("idproducto");
+            var productoprecio = parseFloat($(fila).find("td.productoprecio").text());
+            var importetotal = parseFloat($(fila).find("td.importetotal").text());
 
+            $totalproductos = $totalproductos + productocantidad;
+            $totalimportes = $totalimportes + importetotal;
 
-    VENTA = "<VENTA>" +
-        "<IdTienda>" + $("#txtIdTienda").val() + "</IdTienda>" +
-        "<IdUsuario>" + $("#txtIdUsuario").val() + "</IdUsuario>" +
-        "<IdCliente>0</IdCliente>" +
-        "<TipoDocumento>" + $("#cboventatipodocumento").val() + "</TipoDocumento>" +
-        "<CantidadProducto>" + $('#tbVenta tbody tr').length + "</CantidadProducto>" +
-        "<CantidadTotal>" + $totalproductos + "</CantidadTotal>" +
-        "<TotalCosto>" + $totalimportes + "</TotalCosto>" +
-        "<ImporteRecibido>" + $("#txtmontopago").val() + "</ImporteRecibido>" +
-        "<ImporteCambio>" + $("#txtcambio").val() + "</ImporteCambio>" +
-        "</VENTA >";
-
-    DETALLE_CLIENTE = "<DETALLE_CLIENTE><DATOS>" +
-        "<TipoDocumento>" + $("#cboclientetipodocumento").val() +"</TipoDocumento>" +
-        "<NumeroDocumento>" + $("#txtclientedocumento").val() +"</NumeroDocumento>" +
-        "<Nombre>" + $("#txtclientenombres").val() +"</Nombre>" +
-        "<Direccion>" + $("#txtclientedireccion").val() +"</Direccion>" +
-        "<Telefono>" + $("#txtclientetelefono").val() +"</Telefono>" +
-        "</DATOS></DETALLE_CLIENTE>";
-
-    DETALLE_VENTA = "<DETALLE_VENTA>" + DATOS_VENTA + "</DETALLE_VENTA>";
-
-    DETALLE = "<DETALLE>" + VENTA + DETALLE_CLIENTE + DETALLE_VENTA + "</DETALLE>"
+            DATOS_VENTA = DATOS_VENTA + "<DATOS>" +
+                "<IdVenta> 0</IdVenta >" +
+                "<IdProducto>" + idproducto + "</IdProducto>" +
+                "<Cantidad>" + productocantidad + "</Cantidad>" +
+                "<PrecioUnidad>" + productoprecio + "</PrecioUnidad>" +
+                "<ImporteTotal>" + importetotal + "</ImporteTotal>" +
+                "</DATOS>"
+        });
 
 
-    var request = { xml: DETALLE };
-    AjaxPost("../frmCrearVenta.aspx/Guardar", JSON.stringify(request),
-        function (response) {
-            $(".card-venta").LoadingOverlay("hide");
-            if (response.estado) {
-                //DOCUMENTO
-                $("#cboventatipodocumento").val("Boleta");
+        VENTA = "<VENTA>" +
+            "<IdTienda>" + $("#txtIdTienda").val() + "</IdTienda>" +
+            "<IdUsuario>" + $("#txtIdUsuario").val() + "</IdUsuario>" +
+            "<IdCliente>0</IdCliente>" +
+            "<TipoDocumento>" + $("#cboventatipodocumento").val() + "</TipoDocumento>" +
+            "<CantidadProducto>" + $('#tbVenta tbody tr').length + "</CantidadProducto>" +
+            "<CantidadTotal>" + $totalproductos + "</CantidadTotal>" +
+            "<TotalCosto>" + $totalimportes + "</TotalCosto>" +
+            "<ImporteRecibido>" + $("#txtmontopago").val() + "</ImporteRecibido>" +
+            "<ImporteCambio>" + $("#txtcambio").val() + "</ImporteCambio>" +
+            "</VENTA >";
 
-                //CLIENTE
-                $("#cboclientetipodocumento").val("DNI");
-                $("#txtclientedocumento").val("");
-                $("#txtclientenombres").val("");
-                $("#txtclientedireccion").val("");
-                $("#txtclientetelefono").val("");
+        DETALLE_CLIENTE = "<DETALLE_CLIENTE><DATOS>" +
+            "<TipoDocumento>" + $("#cboclientetipodocumento").val() + "</TipoDocumento>" +
+            "<NumeroDocumento>" + $("#txtclientedocumento").val() + "</NumeroDocumento>" +
+            "<Nombre>" + $("#txtclientenombres").val() + "</Nombre>" +
+            "<Direccion>" + $("#txtclientedireccion").val() + "</Direccion>" +
+            "<Telefono>" + $("#txtclientetelefono").val() + "</Telefono>" +
+            "</DATOS></DETALLE_CLIENTE>";
 
+        DETALLE_VENTA = "<DETALLE_VENTA>" + DATOS_VENTA + "</DETALLE_VENTA>";
 
-                //PRODUCTO
-                $("#txtIdProducto").val("0");
-                $("#txtproductocodigo").val("");
-                $("#txtproductonombre").val("");
-                $("#txtproductodescripcion").val("");
-                $("#txtproductostock").val("");
-                $("#txtproductoprecio").val("");
-                $("#txtproductocantidad").val("0");
-
-                //PRECIOS
-                $("#txtsubtotal").val("0");
-                $("#txtigv").val("0");
-                $("#txttotal").val("0");
-                $("#txtmontopago").val("");
-                $("#txtcambio").val("");
+        DETALLE = "<DETALLE>" + VENTA + DETALLE_CLIENTE + DETALLE_VENTA + "</DETALLE>"
 
 
-                $("#tbVenta tbody").html("");
+        var request = { xml: DETALLE };
+        AjaxPost("../frmCrearVenta.aspx/Guardar", JSON.stringify(request),
+            function (response) {
+                $(".card-venta").LoadingOverlay("hide");
+                if (response.estado) {
+                    //DOCUMENTO
+                    $("#cboventatipodocumento").val("Boleta");
 
-                var url = 'docVenta.aspx?id=' + response.valor;
-                window.open(url, '', 'height=600,width=800,scrollbars=0,location=1,toolbar=0');
-                
-            } else {
-                swal("Mensaje", "No se pudo registrar la venta", "warning")
-            }
-        },
-        function () {
-            $(".card-venta").LoadingOverlay("hide");
-        },
-        function () {
-            $(".card-venta").LoadingOverlay("show");
-        })
+                    //CLIENTE
+                    $("#cboclientetipodocumento").val("DNI");
+                    $("#txtclientedocumento").val("");
+                    $("#txtclientenombres").val("");
+                    $("#txtclientedireccion").val("");
+                    $("#txtclientetelefono").val("");
 
+
+                    //PRODUCTO
+                    $("#txtIdProducto").val("0");
+                    $("#txtproductocodigo").val("");
+                    $("#txtproductonombre").val("");
+                    $("#txtproductodescripcion").val("");
+                    $("#txtproductostock").val("");
+                    $("#txtproductoprecio").val("");
+                    $("#txtproductocantidad").val("0");
+
+                    //PRECIOS
+                    $("#txtsubtotal").val("0");
+                    $("#txtigv").val("0");
+                    $("#txttotal").val("0");
+                    $("#txtmontopago").val("");
+                    $("#txtcambio").val("");
+
+
+                    $("#tbVenta tbody").html("");
+
+                    var url = 'docVenta.aspx?id=' + response.valor;
+                    window.open(url, '', 'height=600,width=800,scrollbars=0,location=1,toolbar=0');
+
+                } else {
+                    swal("Mensaje", "No se pudo registrar la venta", "warning")
+                }
+            },
+            function () {
+                $(".card-venta").LoadingOverlay("hide");
+            },
+            function () {
+                $(".card-venta").LoadingOverlay("show");
+            })
+
+    }
 })
 
 function calcularCambio() {

@@ -7,9 +7,11 @@
 // </generado automáticamente>
 //------------------------------------------------------------------------------
 
-namespace SistemaVentas {
-    
-    
-    public partial class frmCrearVenta {
+namespace SistemaVentas
+{
+
+
+    public partial class frmCrearVenta
+    {
     }
 }

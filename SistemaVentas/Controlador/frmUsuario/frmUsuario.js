@@ -160,10 +160,19 @@ $('#btnNuevoRol').on('click', function () {
     $('#modalrol').modal('show');
 })
 
+function checkEmail(str) {
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!re.test(str))
+        swal("Mensaje", "Ingrese formato adecuado de email", "warning");
+}
+
+
 $('#btnGuardarCambios').on('click', function () {
     var camposvacios = false;
     var fields = $(".model").serializeArray();
+    var email = $('#txtCorreo').val();
 
+    console.log(email);
 
     $.each(fields, function (i, field) {
         if (!field.value) {
@@ -199,7 +208,7 @@ $('#btnGuardarCambios').on('click', function () {
                         cargarDatos();
                         $('#modalrol').modal('hide');
                     } else {
-                        swal("Mensaje", "No se pudo registrar el usuario", "warning")
+                        swal("Mensaje", "No se pudo registrar el usuario (Usuario Repetido?)", "warning")
                     }
                 },
                 function () {
